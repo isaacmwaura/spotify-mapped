@@ -50,7 +50,7 @@ export function HistoryList({
   return (
     <>
       <div className="vhead" aria-hidden="true">
-        <span>When</span>
+        <span>Started</span>
         <span>What</span>
         <span className="vcol-meta">Context</span>
         <span style={{ textAlign: 'right' }}>Played</span>

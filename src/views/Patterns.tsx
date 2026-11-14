@@ -2,7 +2,7 @@
 import { useMemo } from 'react'
 import type { Play } from '../lib/data'
 import { WEEKDAYS, duration, hourLabel, hours, num } from '../lib/format'
-import { byHour, countBy, heatmap, sessions, summarise } from '../lib/stats'
+import { byHour, byWeekday, countBy, heatmap, sessions, summarise } from '../lib/stats'
 import { Card, Stat } from '../components/ui'
 import { HeatLegend, Heatmap, HourChart, RankedBars } from '../components/Charts'
 
@@ -12,11 +12,8 @@ export function Patterns({ plays }: { plays: Play[] }) {
   const hourly = useMemo(() => byHour(plays), [plays])
   const sess = useMemo(() => sessions(plays), [plays])
 
-  const weekdayTotals = useMemo(() => {
-    const out = new Array(7).fill(0)
-    for (const p of plays) out[p.weekday] += p.ms
-    return out
-  }, [plays])
+  // Spread over the hours each play covered, the same way as the heat map.
+  const weekdayTotals = useMemo(() => byWeekday(plays), [plays])
 
   const platforms = useMemo(
     () => countBy(plays, (p) => p.platform, (p) => p.ms),

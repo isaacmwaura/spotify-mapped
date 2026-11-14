@@ -143,8 +143,8 @@ export function rankEntities(
     e.ms += p.ms
     e.plays++
     if (p.skipped) e.skips++
-    if (p.ts < e.first.ts) e.first = p
-    if (p.ts > e.last.ts) e.last = p
+    if (p.start < e.first.start) e.first = p
+    if (p.start > e.last.start) e.last = p
 
     const child = childOf(p)
     if (child) {
@@ -268,20 +268,61 @@ export function byMonth(plays: Play[]): MonthBucket[] {
   return [...map.values()]
 }
 
-/** 7 x 24 grid of listening time, in local time. */
+/**
+ * Calls `add` once for every clock hour a play covered, with the milliseconds
+ * spent in that hour. A 92-minute episode from 22:35 gives three slices:
+ * 25 minutes at 22:00, 60 at 23:00 and 7 at 00:00 the next day.
+ * Uses the device's local clock, so daylight-saving changes are handled.
+ */
+export function forEachHourSlice(
+  p: Play,
+  add: (weekday: number, hour: number, ms: number) => void,
+): void {
+  const endMs = p.start * 1000 + p.ms
+  let t = p.start * 1000
+  // A guard against corrupt records: no single play spans more than a few days.
+  for (let n = 0; t < endMs && n < 200; n++) {
+    const d = new Date(t)
+    const next = new Date(t)
+    next.setMinutes(60, 0, 0) // the next o'clock
+    const sliceEnd = Math.min(endMs, next.getTime())
+    add(d.getDay(), d.getHours(), sliceEnd - t)
+    t = sliceEnd
+  }
+}
+
+/** 7 x 24 grid of listening time, in local time, each play spread over its hours. */
 export function heatmap(plays: Play[]): { grid: number[][]; max: number } {
   const grid = Array.from({ length: 7 }, () => new Array(24).fill(0))
-  let max = 0
   for (const p of plays) {
-    const v = (grid[p.weekday][p.hour] += p.ms)
-    if (v > max) max = v
+    forEachHourSlice(p, (weekday, hour, ms) => {
+      grid[weekday][hour] += ms
+    })
   }
+  let max = 0
+  for (const row of grid) for (const v of row) if (v > max) max = v
   return { grid, max }
 }
 
+/** Listening time per hour of day, each play spread over its hours. */
 export function byHour(plays: Play[]): number[] {
   const out = new Array(24).fill(0)
-  for (const p of plays) out[p.hour] += p.ms
+  for (const p of plays) {
+    forEachHourSlice(p, (_weekday, hour, ms) => {
+      out[hour] += ms
+    })
+  }
+  return out
+}
+
+/** Listening time per weekday (0 = Sunday), each play spread over its hours. */
+export function byWeekday(plays: Play[]): number[] {
+  const out = new Array(7).fill(0)
+  for (const p of plays) {
+    forEachHourSlice(p, (weekday, _hour, ms) => {
+      out[weekday] += ms
+    })
+  }
   return out
 }
 
@@ -339,17 +380,21 @@ export function longestStreak(plays: Play[]): { days: number; from: Date; to: Da
  */
 export function sessions(plays: Play[], gapMinutes = 30) {
   const gap = gapMinutes * 60
-  const out: { start: Play; end: Play; ms: number; count: number }[] = []
-  let cur: { start: Play; end: Play; ms: number; count: number } | null = null
+  type Session = { start: Play; end: Play; ms: number; count: number; stoppedAt: number }
+  const out: Session[] = []
+  let cur: Session | null = null
 
+  // Plays arrive in start order. The silence before a play is its start minus
+  // the latest moment anything in the current session was still playing.
   for (const p of plays) {
-    if (cur && p.ts - (cur.end.ts + Math.floor(cur.end.ms / 1000)) <= gap) {
+    if (cur && p.start - cur.stoppedAt <= gap) {
       cur.end = p
       cur.ms += p.ms
       cur.count++
+      cur.stoppedAt = Math.max(cur.stoppedAt, p.end)
     } else {
       if (cur) out.push(cur)
-      cur = { start: p, end: p, ms: p.ms, count: 1 }
+      cur = { start: p, end: p, ms: p.ms, count: 1, stoppedAt: p.end }
     }
   }
   if (cur) out.push(cur)

@@ -19,7 +19,14 @@ export const KIND_CLASS: Record<Kind, string> = {
 
 export interface Play {
   i: number
-  ts: number
+  /**
+   * When the play STARTED, in Unix seconds. Spotify only records when a play
+   * stopped ("ts"), so this is worked out as stop time minus time played.
+   */
+  start: number
+  /** When the play stopped, in Unix seconds: Spotify's own "ts". */
+  end: number
+  /** The start, as a date. Every date, hour and day below is based on it. */
   date: Date
   ms: number
   kind: Kind
@@ -106,13 +113,16 @@ export function decodeDataset(raw: RawDataset): Dataset {
   const plays: Play[] = raw.plays.map((r, i) => {
     const kind = r[2] as Kind
     const titleIdx = r[3]
-    const date = new Date(r[0] * 1000)
+    const end = r[0]
+    const start = end - Math.round(r[1] / 1000)
+    const date = new Date(start * 1000)
     const uriKey =
       kind === KIND.MUSIC ? `track:${titleIdx}` : `episode:${titleIdx}`
 
     return {
       i,
-      ts: r[0],
+      start,
+      end,
       date,
       ms: r[1],
       kind,
@@ -136,6 +146,11 @@ export function decodeDataset(raw: RawDataset): Dataset {
       dayKey: `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
     }
   })
+
+  // The file is in stop-time order. Re-sort by start so "oldest first",
+  // "first played" and sessions all follow the order things actually began.
+  plays.sort((a, b) => a.start - b.start || a.end - b.end)
+  plays.forEach((play, idx) => (play.i = idx))
 
   return {
     generatedAt: raw.generatedAt,
