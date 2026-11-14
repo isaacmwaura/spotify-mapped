@@ -216,7 +216,7 @@ export function Overview({
           <Mini label="Saved to library" value={`${num(data.library.episodes)} episodes`} />
           <Mini
             label="Following"
-            value={`${num(data.library.shows.length)} shows · ${num(data.library.artists.length)} artists`}
+            value={`${num(data.library.shows)} shows · ${num(data.library.artists)} artists`}
           />
         </div>
       </Card>

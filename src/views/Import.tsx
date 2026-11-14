@@ -19,10 +19,8 @@ type Phase = 'idle' | 'reading' | 'error'
 
 export function Import({
   onReady,
-  onCancel,
 }: {
   onReady: (raw: RawDataset, report: ImportReport) => void
-  onCancel?: () => void
 }) {
   const [phase, setPhase] = useState<Phase>('idle')
   const [status, setStatus] = useState('')
@@ -215,16 +213,12 @@ export function Import({
             <li>Drop the zip they email you straight onto this page.</li>
           </ol>
           <p className="import-privacy">
-            Everything is parsed in this browser tab and stored on this device only. Nothing is
-            uploaded, and there is no server to upload it to.
+            Everything happens inside this browser tab. Nothing is uploaded, because there is
+            no server to upload it to. Nothing is saved either: close or reload the tab and
+            your data is gone.
           </p>
         </details>
 
-        {onCancel && (
-          <button className="icon-btn" style={{ alignSelf: 'flex-start' }} onClick={onCancel}>
-            Back to my data
-          </button>
-        )}
       </div>
     </div>
   )

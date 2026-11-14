@@ -38,21 +38,17 @@ const isBasicStream = (p: string) =>
 const accountFile = (p: string, name: string) =>
   baseName(p).toLowerCase() === name.toLowerCase()
 
-const isPlaylistFile = (p: string) => /^Playlist\d*\.json$/i.test(baseName(p))
-
 /** Files we should never try to parse — huge telemetry logs, PDFs, images. */
 export function isRelevant(path: string): boolean {
   const b = baseName(path)
   if (!/\.json$/i.test(b)) return false
-  if (isExtendedStream(b) || isBasicStream(b) || isPlaylistFile(b)) return true
-  return [
-    'UserAttributes.json',
-    'Identity.json',
-    'YourLibrary.json',
-    'SearchQueries.json',
-    'Marquee.json',
-  ].some((n) => accountFile(b, n))
+  if (isExtendedStream(b) || isBasicStream(b)) return true
+  // Only the account files whose contents appear on screen. Searches, playlists
+  // and the like are never opened, so they cannot leak.
+  return ACCOUNT_FILES_READ.some((n) => accountFile(b, n))
 }
+
+const ACCOUNT_FILES_READ = ['UserAttributes.json', 'Identity.json', 'YourLibrary.json']
 
 /* ---------------------------------------------------------------- interning */
 
@@ -299,51 +295,15 @@ export function buildRawDataset(files: ImportFile[]): {
   const identity = readObj('Identity.json')
   const library = readObj('YourLibrary.json')
 
-  const asList = (v: unknown) => (Array.isArray(v) ? v : [])
-
-  const playlists: RawDataset['playlists'] = []
-  for (const f of relevant.filter((x) => isPlaylistFile(x.path))) {
-    const parsed = parseJSON(f) as { playlists?: unknown }
-    for (const p of asList(parsed?.playlists) as Record<string, unknown>[]) {
-      playlists.push({
-        name: String(p.name ?? 'Untitled'),
-        modified: (p.lastModifiedDate as string) ?? null,
-        count: asList(p.items).length,
-      })
-    }
-  }
-
-  // Search terms arrive as every keystroke ("c", "co", "cop"), so collapse each
-  // prefix chain down to the longest form the user actually typed.
-  const searchFile = findFile('SearchQueries.json')
-  const searches: RawDataset['searches'] = []
-  if (searchFile) {
-    const list = asList(parseJSON(searchFile)) as Record<string, string>[]
-    const byTime = list
-      .filter((s) => s.searchQuery)
-      .sort((a, b) => String(a.searchTime).localeCompare(String(b.searchTime)))
-    const kept: { q: string; t: string }[] = []
-    for (const s of byTime) {
-      const q = s.searchQuery.trim()
-      if (!q) continue
-      const prev = kept[kept.length - 1]
-      if (prev && (q.startsWith(prev.q) || prev.q.startsWith(q))) {
-        if (q.length > prev.q.length) kept[kept.length - 1] = { q, t: s.searchTime }
-        continue
-      }
-      kept.push({ q, t: s.searchTime })
-    }
-    searches.push(...kept.reverse().map((k) => ({ query: k.q, time: k.t })))
-  }
+  const count = (v: unknown) => (Array.isArray(v) ? v.length : 0)
 
   const raw: RawDataset = {
     generatedAt: new Date().toISOString(),
+    // Only what the Overview shows. Email, birth date, gender, username and
+    // country are in the export but are never kept.
     profile: {
-      displayName:
-        (identity.displayName as string) || (attrs.username as string) || 'You',
-      country: (attrs.country as string) ?? null,
-      created: (attrs.creationTime as string) ?? null,
-      email: (attrs.email as string) ?? null,
+      displayName: typeof identity.displayName === 'string' && identity.displayName ? identity.displayName : 'You',
+      created: typeof attrs.creationTime === 'string' ? attrs.creationTime : null,
     },
     pools: {
       track: trackPool.values,
@@ -357,15 +317,12 @@ export function buildRawDataset(files: ImportFile[]): {
       uri: uriPool.values,
     },
     plays: rows,
+    // Counts only: the Overview shows how many, never which.
     library: {
-      tracks: asList(library.tracks),
-      albums: asList(library.albums),
-      artists: asList(library.artists),
-      shows: asList(library.shows),
-      episodes: asList(library.episodes).length,
+      episodes: count(library.episodes),
+      shows: count(library.shows),
+      artists: count(library.artists),
     },
-    playlists,
-    searches,
   }
 
   return {

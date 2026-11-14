@@ -56,34 +56,16 @@ export interface Play {
 
 export interface Profile {
   displayName: string
-  country: string | null
+  /** Account creation date as Spotify gives it (YYYY-MM-DD), if present. */
   created: string | null
-  email: string | null
-}
-
-export interface LibraryItem {
-  name?: string
-  track?: string
-  artist?: string
-  album?: string
-  publisher?: string
-  show?: string
-  uri?: string
 }
 
 export interface Dataset {
   generatedAt: string
   profile: Profile
   plays: Play[]
-  library: {
-    tracks: LibraryItem[]
-    albums: LibraryItem[]
-    artists: LibraryItem[]
-    shows: LibraryItem[]
-    episodes: number
-  }
-  playlists: { name: string; modified: string | null; count: number }[]
-  searches: { query: string; time: string }[]
+  /** How many items are saved in the Spotify library, by type. */
+  library: { episodes: number; shows: number; artists: number }
 }
 
 /** The packed form: what gets stored, and what the importer produces. */
@@ -93,8 +75,6 @@ export interface RawDataset {
   pools: Record<string, string[]>
   plays: number[][]
   library: Dataset['library']
-  playlists: Dataset['playlists']
-  searches: Dataset['searches']
 }
 
 const F_SKIPPED = 1
@@ -154,8 +134,6 @@ export function decodeDataset(raw: RawDataset): Dataset {
     profile: raw.profile,
     plays,
     library: raw.library,
-    playlists: raw.playlists,
-    searches: raw.searches,
   }
 }
 

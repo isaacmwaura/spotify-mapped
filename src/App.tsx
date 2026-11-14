@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { decodeDataset, type Dataset, type RawDataset } from './lib/data'
-import { clearStored, loadStored, saveStored } from './lib/store'
 import { Import } from './views/Import'
 import { years as yearsOf } from './lib/stats'
 import { viewFromHash, type View } from './lib/route'
@@ -86,8 +85,6 @@ const VIEWS: {
 
 export default function App() {
   const [data, setData] = useState<Dataset | null>(null)
-  const [booting, setBooting] = useState(true)
-  const [importing, setImporting] = useState(false)
   const [view, setView] = useState<View>(() => viewFromHash(location.hash))
 
   // The browser's Back and Forward buttons change the hash; follow them.
@@ -97,38 +94,43 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
   const [selection, setSelection] = useState<Selection | null>(null)
-  const [theme, setTheme] = useState<'dark' | 'light'>(
-    () => (localStorage.getItem('theme') as 'dark' | 'light') || 'dark',
-  )
+  // The light/dark choice is the only thing remembered between visits.
+  // Listening data never is: it lives in this tab's memory and nowhere else.
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      return localStorage.getItem('theme') === 'light' ? 'light' : 'dark'
+    } catch {
+      return 'dark'
+    }
+  })
 
-  // Import once; the dataset is kept on this device and reloaded on every visit.
+  // Earlier versions kept the import in browser storage. Wipe anything they
+  // left behind, so nothing from before this version lingers on the device.
   useEffect(() => {
-    loadStored()
-      .then((raw) => {
-        if (raw) setData(decodeDataset(raw))
-      })
-      .finally(() => setBooting(false))
+    try {
+      indexedDB?.deleteDatabase('spotify-mapped')
+    } catch {
+      /* storage blocked: nothing to wipe */
+    }
   }, [])
 
   const accept = useCallback((raw: RawDataset) => {
     setData(decodeDataset(raw))
-    setImporting(false)
     setView('overview')
-    void saveStored(raw)
   }, [])
 
-  const replace = useCallback(() => setImporting(true), [])
-
-  const forget = useCallback(async () => {
-    if (!confirm('Remove the imported Spotify data from this device?')) return
-    await clearStored()
+  const startOver = useCallback(() => {
+    setSelection(null)
     setData(null)
-    setImporting(false)
   }, [])
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    localStorage.setItem('theme', theme)
+    try {
+      localStorage.setItem('theme', theme)
+    } catch {
+      /* private mode: the choice just isn't remembered */
+    }
   }, [theme])
 
   useEffect(() => {
@@ -144,25 +146,7 @@ export default function App() {
     setSelection({ name, kind })
   }, [])
 
-  if (booting) {
-    return (
-      <div className="loading">
-        <div style={{ textAlign: 'center' }}>
-          <div className="spinner" />
-          Reading your listening history…
-        </div>
-      </div>
-    )
-  }
-
-  if (!data || importing) {
-    return (
-      <Import
-        onReady={accept}
-        onCancel={data ? () => setImporting(false) : undefined}
-      />
-    )
-  }
+  if (!data) return <Import onReady={accept} />
 
   const meta = VIEWS.find((v) => v.id === view) ?? VIEWS[0]
 
@@ -205,15 +189,15 @@ export default function App() {
             {hours(totalMs)} listened
             <br />
             {years[0]}–{years[years.length - 1]}
-            <br />
-            <button className="link-btn" onClick={replace}>
-              Import new export
-            </button>
-            {' · '}
-            <button className="link-btn" onClick={forget}>
-              Forget
-            </button>
           </div>
+          {/* Outside .meta, which phones hide, so it is reachable everywhere. */}
+          <button
+            className="icon-btn"
+            onClick={startOver}
+            title="Clear this analysis and choose another file"
+          >
+            Start over
+          </button>
           <button
             className="icon-btn"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
