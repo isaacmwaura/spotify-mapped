@@ -91,7 +91,6 @@ export interface RawDataset {
   generatedAt: string
   profile: Profile
   pools: Record<string, string[]>
-  uris: Record<string, string>
   plays: number[][]
   library: Dataset['library']
   playlists: Dataset['playlists']
@@ -116,8 +115,6 @@ export function decodeDataset(raw: RawDataset): Dataset {
     const end = r[0]
     const start = end - Math.round(r[1] / 1000)
     const date = new Date(start * 1000)
-    const uriKey =
-      kind === KIND.MUSIC ? `track:${titleIdx}` : `episode:${titleIdx}`
 
     return {
       i,
@@ -137,7 +134,7 @@ export function decodeDataset(raw: RawDataset): Dataset {
       shuffle: !!(r[10] & F_SHUFFLE),
       offline: !!(r[10] & F_OFFLINE),
       incognito: !!(r[10] & F_INCOGNITO),
-      uri: raw.uris[uriKey] || '',
+      uri: str(p.uri, r[11]),
       year: date.getFullYear(),
       month: date.getMonth(),
       day: date.getDate(),

@@ -211,13 +211,9 @@ export function buildRawDataset(files: ImportFile[]): {
   const platformPool = makePool()
   const countryPool = makePool()
   const reasonPool = makePool()
-
-  const uris: Record<string, string> = {}
-  const rememberUri = (kind: string, id: number, uri?: string | null) => {
-    if (id < 0 || !uri) return
-    const k = `${kind}:${id}`
-    if (!(k in uris)) uris[k] = uri
-  }
+  // One entry per distinct Spotify link. Each play points at its own, so two
+  // different songs that share a title still open the right one.
+  const uriPool = makePool()
 
   const rows: number[][] = []
   let dropped = 0
@@ -260,9 +256,6 @@ export function buildRawDataset(files: ImportFile[]): {
       continue
     }
 
-    if (kind === 0) rememberUri('track', title, r.spotify_track_uri)
-    else if (kind === 1) rememberUri('episode', title, r.spotify_episode_uri)
-
     let flags = 0
     if (r.skipped) flags |= F_SKIPPED
     if (r.shuffle) flags |= F_SHUFFLE
@@ -281,6 +274,7 @@ export function buildRawDataset(files: ImportFile[]): {
       reasonPool.id(r.reason_start),
       reasonPool.id(r.reason_end),
       flags,
+      uriPool.id(r.spotify_track_uri || r.spotify_episode_uri || r.audiobook_chapter_uri),
     ])
   }
 
@@ -360,8 +354,8 @@ export function buildRawDataset(files: ImportFile[]): {
       platform: platformPool.values,
       country: countryPool.values,
       reason: reasonPool.values,
+      uri: uriPool.values,
     },
-    uris,
     plays: rows,
     library: {
       tracks: asList(library.tracks),
