@@ -3,6 +3,7 @@ import { decodeDataset, type Dataset, type RawDataset } from './lib/data'
 import { clearStored, loadStored, saveStored } from './lib/store'
 import { Import } from './views/Import'
 import { years as yearsOf } from './lib/stats'
+import { viewFromHash, type View } from './lib/route'
 import { hours, num } from './lib/format'
 import { Overview } from './views/Overview'
 import { History } from './views/History'
@@ -11,7 +12,6 @@ import { Patterns } from './views/Patterns'
 import { Years } from './views/Years'
 import { EntityDrawer, type Selection } from './components/EntityDrawer'
 
-type View = 'overview' | 'history' | 'top' | 'patterns' | 'years'
 
 const VIEWS: {
   id: View
@@ -88,9 +88,14 @@ export default function App() {
   const [data, setData] = useState<Dataset | null>(null)
   const [booting, setBooting] = useState(true)
   const [importing, setImporting] = useState(false)
-  const [view, setView] = useState<View>(
-    () => (location.hash.slice(1) as View) || 'overview',
-  )
+  const [view, setView] = useState<View>(() => viewFromHash(location.hash))
+
+  // The browser's Back and Forward buttons change the hash; follow them.
+  useEffect(() => {
+    const onHash = () => setView(viewFromHash(location.hash))
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
   const [selection, setSelection] = useState<Selection | null>(null)
   const [theme, setTheme] = useState<'dark' | 'light'>(
     () => (localStorage.getItem('theme') as 'dark' | 'light') || 'dark',
@@ -159,7 +164,7 @@ export default function App() {
     )
   }
 
-  const meta = VIEWS.find((v) => v.id === view)!
+  const meta = VIEWS.find((v) => v.id === view) ?? VIEWS[0]
 
   return (
     <div className="app">
