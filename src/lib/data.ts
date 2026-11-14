@@ -3,20 +3,6 @@
 export const KIND = { MUSIC: 0, PODCAST: 1, BOOK: 2, OTHER: 3 } as const
 export type Kind = 0 | 1 | 2 | 3
 
-export const KIND_LABEL: Record<Kind, string> = {
-  0: 'Music',
-  1: 'Podcast',
-  2: 'Audiobook',
-  3: 'Other',
-}
-
-export const KIND_CLASS: Record<Kind, string> = {
-  0: 'music',
-  1: 'podcast',
-  2: 'book',
-  3: '',
-}
-
 export interface Play {
   i: number
   /**
@@ -42,7 +28,6 @@ export interface Play {
   skipped: boolean
   shuffle: boolean
   offline: boolean
-  incognito: boolean
   uri: string
   /** Local-time parts, precomputed — every pattern view needs these. */
   year: number
@@ -80,7 +65,6 @@ export interface RawDataset {
 const F_SKIPPED = 1
 const F_SHUFFLE = 2
 const F_OFFLINE = 4
-const F_INCOGNITO = 8
 
 const pad = (n: number) => (n < 10 ? '0' + n : String(n))
 
@@ -113,7 +97,6 @@ export function decodeDataset(raw: RawDataset): Dataset {
       skipped: !!(r[10] & F_SKIPPED),
       shuffle: !!(r[10] & F_SHUFFLE),
       offline: !!(r[10] & F_OFFLINE),
-      incognito: !!(r[10] & F_INCOGNITO),
       uri: str(p.uri, r[11]),
       year: date.getFullYear(),
       month: date.getMonth(),

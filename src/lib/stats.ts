@@ -1,6 +1,6 @@
 /** Aggregations over the play log. Everything here is pure and memoisable. */
 
-import { KIND, type Kind, type Play } from './data'
+import { KIND, type Play } from './data'
 
 export interface Entity {
   name: string
@@ -424,5 +424,3 @@ export function normalise(s: string): string {
     .replace(/[̀-ͯ]/g, '')
 }
 
-export const kindLabelOf = (k: Kind) =>
-  k === KIND.MUSIC ? 'Music' : k === KIND.PODCAST ? 'Podcast' : k === KIND.BOOK ? 'Audiobook' : 'Other'

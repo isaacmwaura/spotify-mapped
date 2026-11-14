@@ -1,0 +1,60 @@
+# Tests every change, then publishes the single-file app to GitHub Pages.
+# A failing test stops the publish, so a broken version never goes live.
+#
+# One-time setup on GitHub: Settings > Pages > Source: "GitHub Actions".
+# Action versions checked against their latest releases on 15 Nov 2026.
+
+name: Test and publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install exactly the locked versions
+        run: npm ci
+
+      - name: Run the tests
+        run: npm test
+
+      - name: Build the one-file app
+        run: npm run build:single
+
+      - name: Hand the app to GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist-single
+
+  publish:
+    if: github.event_name != 'pull_request'
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@v5

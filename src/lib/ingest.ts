@@ -73,7 +73,6 @@ function makePool() {
 const F_SKIPPED = 1
 const F_SHUFFLE = 2
 const F_OFFLINE = 4
-const F_INCOGNITO = 8
 
 function normalisePlatform(p: unknown): string {
   if (typeof p !== 'string' || !p) return 'Unknown'
@@ -256,7 +255,6 @@ export function buildRawDataset(files: ImportFile[]): {
     if (r.skipped) flags |= F_SKIPPED
     if (r.shuffle) flags |= F_SHUFFLE
     if (r.offline) flags |= F_OFFLINE
-    if (r.incognito_mode) flags |= F_INCOGNITO
 
     rows.push([
       Math.floor(time / 1000),

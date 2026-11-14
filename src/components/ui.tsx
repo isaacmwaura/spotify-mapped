@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { KIND_CLASS, KIND_LABEL, type Kind } from '../lib/data'
 
 export function Card({
   title,
@@ -46,10 +45,6 @@ export function Stat({
       {sub && <div className="stat-sub">{sub}</div>}
     </div>
   )
-}
-
-export function KindChip({ kind }: { kind: Kind }) {
-  return <span className={`chip ${KIND_CLASS[kind]}`}>{KIND_LABEL[kind]}</span>
 }
 
 export function Segmented<T extends string | number>({

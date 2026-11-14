@@ -27,21 +27,13 @@ const dtDate = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   year: 'numeric',
 })
-const dtDateShort = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-})
 const dtTime = new Intl.DateTimeFormat('en-US', {
   hour: 'numeric',
   minute: '2-digit',
 })
-const dtMonth = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' })
 
 export const fmtDate = (d: Date) => dtDate.format(d)
-export const fmtDateShort = (d: Date) => dtDateShort.format(d)
 export const fmtTime = (d: Date) => dtTime.format(d)
-export const fmtDateTime = (d: Date) => `${dtDateShort.format(d)}, ${dtTime.format(d)}`
-export const fmtMonth = (d: Date) => dtMonth.format(d)
 
 export const MONTHS = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
