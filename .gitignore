@@ -1,0 +1,17 @@
+# Dependencies and build output
+node_modules/
+dist/
+dist-single/
+*.tsbuildinfo
+
+# Personal material: never published. Holds documents built from a real export.
+private/
+
+# Local test staging (real exports copied here for manual checks)
+public/__t/
+
+# Editor / assistant / OS clutter
+.claude/
+*.local
+.DS_Store
+Thumbs.db
