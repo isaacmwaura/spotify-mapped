@@ -4,7 +4,7 @@
  * JSON files — dropped or picked.
  */
 import { useCallback, useRef, useState } from 'react'
-import { unzipSync } from 'fflate'
+import { unzipExport } from '../lib/unpack'
 import {
   ImportError,
   buildRawDataset,
@@ -255,11 +255,7 @@ async function collectFiles(
             '"Spotify Extended Streaming History" folder, which is only a few megabytes.',
         )
       }
-      const entries = unzipRelevant(buf)
-      const decoder = new TextDecoder()
-      for (const [path, bytes] of Object.entries(entries)) {
-        out.push({ path, text: decoder.decode(bytes) })
-      }
+      out.push(...unzipExport(buf))
       continue
     }
     // A raw folder drop includes megabytes of telemetry logs we never touch.
@@ -270,17 +266,6 @@ async function collectFiles(
 
   return out
 }
-
-function unzipRelevant(data: Uint8Array): Record<string, Uint8Array> {
-  // unzipSync, not the async form: the async one runs the work in a Web Worker,
-  // and browsers block workers when the page is opened straight off disk.
-  try {
-    return unzipSync(data, { filter: (f) => isRelevant(f.name) })
-  } catch (e) {
-    throw new ImportError(`That zip could not be opened (${(e as Error).message}).`)
-  }
-}
-
 
 /** Recursively pulls every file out of a dropped directory. */
 async function walkEntry(entry: FileSystemEntry, out: File[]): Promise<void> {
