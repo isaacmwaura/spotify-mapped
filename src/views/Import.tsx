@@ -207,8 +207,8 @@ export function Import({
               covers about the last year. Ticking both is fine.
             </li>
             <li>
-              Confirm the email Spotify sends, then wait. Account data arrives in a few days;
-              extended history can take up to 30.
+              Confirm the email Spotify sends, then wait for the download link. Spotify's
+              privacy policy reports answering data requests in about four days on average in 2025.
             </li>
             <li>Drop the zip they email you straight onto this page.</li>
           </ol>

@@ -1,126 +1,118 @@
 # Spotify Mapped
 
-A local app for reading your own Spotify data export — the complete play log plus
-the summaries that are actually worth looking at.
+See your complete Spotify listening history — every play since you joined — from the
+data export Spotify gives you. Drop the file in, and the analysis appears in your browser.
 
-Built around one idea: **the all-time history is the product.** Spotify shows you
-Wrapped once a year and 50 recently-played items. This shows you every single play,
-searchable, from the day the account was created.
+**Private by design.** Your file is read inside your browser tab. Nothing is uploaded,
+because there is no server. Nothing is saved: close or reload the tab and the data is gone.
 
-## Running it
+This is an independent project. It is not made by, or affiliated with, Spotify.
 
-```bash
-npm install && npm run dev
-```
+## Using it
 
-`npm run dev` is just a shortcut for `vite` — it starts a local dev server that
-live-reloads while you edit. Open the URL it prints, then **drop your Spotify export
-onto the page**: the zip exactly as Spotify emails it, the folder you unpacked it to,
-or loose JSON files. That's the whole setup.
+1. **Request your data from Spotify.** Go to your account's privacy settings
+   (`spotify.com/account/privacy`) and request **Extended streaming history**. The
+   default "Account data" option only covers about the last year; the extended one goes
+   back to the day you joined. You can request both.
+2. **Wait for the email.** Spotify sends a download link when the export is ready. Its
+   privacy policy reports answering data requests in about four days on average in 2025.
+3. **Open the app and add the file.** On a computer, drag the zip onto the page, or
+   choose it. On a phone, tap *Choose file* and pick the zip. You can also choose the
+   unzipped folder on a computer.
 
-For everyday use, build it once instead:
+The app reads the files it needs and ignores the rest. A full export includes tens of
+megabytes of technical logs that say nothing about your listening; those are never even
+unpacked.
 
-```bash
-npm run build   # -> dist/, three files, ~220 KB
-npx serve dist  # then open the URL it prints
-```
+### Phones
 
-`dist/` is a plain static site you can host anywhere. It does need to be *served* over
-http rather than opened straight off disk — the bundle is an ES module, and browsers
-refuse to load those over `file://`, so double-clicking `dist/index.html` shows a
-blank page.
+It works in a phone's browser. Two limits worth knowing:
 
-## Dependencies
+- Phones cannot pick a whole folder, so choose the zip itself.
+- Unpacking needs the whole zip in memory. A very large export can be too much for a
+  phone. If that happens, the app says so: unzip it on a computer and choose just the
+  *Spotify Extended Streaming History* folder, which is only a few megabytes.
 
-Eight direct packages, 41 in total. `react` and `react-dom` render the UI; `vite`,
-`typescript` and the type packages are build tooling that never ships. The only
-runtime library doing real work is **fflate**, which unzips your export in the
-browser.
+## What it shows
 
-There is deliberately no chart library, component kit, CSS framework or virtualisation
-library — the SVG charts, the windowed history list, the export parser and the styles
-are all written for this project. The app makes **no network requests of any kind**:
-no analytics, no CDN, no backend.
-
-## Getting your data from Spotify
-
-1. Go to `spotify.com/account/privacy` while signed in.
-2. Tick **Extended streaming history**. The default "Account data" option only covers
-   about the last year — the extended one goes back to the day you joined. Ticking
-   both is fine.
-3. Confirm the email Spotify sends. Account data arrives in a few days; extended
-   history can take up to 30.
-4. Drop the zip they email you onto the page.
-
-The app reads these if it finds them, and ignores everything else in the export
-(the technical log folder is tens of megabytes of telemetry nobody needs):
-
-- `Spotify Extended Streaming History/Streaming_History_*.json` — the play log
-- `Spotify Account Data/` — profile, library, playlists, searches
-
-If only the basic `StreamingHistory_*.json` files are present, it falls back to those
-and tells you what you're missing.
-
-### Where the data lives
-
-Parsing happens in the browser tab. The result is stored in IndexedDB on your own
-machine, so you import once and it's there on every later visit. Nothing is uploaded
-— the app has no backend to upload it to. **Import new export** re-reads a fresh
-download; **Forget** wipes it from the device. Both are in the sidebar footer.
-
-### What the importer does
-
-- **Deduplicates.** The export ships overlapping year files — the 2025 file contains
-  2024 rows — so some plays appear twice. Identity is timestamp + item + duration.
-- **Interns strings.** Track, artist and show names are stored once and referenced by
-  index, which takes a ~4.5 MB export down to about 550 KB.
-- **Packs flags into bits.** Skipped / shuffle / offline / incognito become one integer.
-
-## The five views
-
-| View | What it answers |
+| Screen | What it answers |
 |---|---|
-| **Overview** | How much, since when, what kind, who — plus first play, biggest day, longest session and longest streak |
-| **All-time history** | Every play, newest first, each with its own full date and time. Search by track, episode, artist, show or album; filter by type, year, length, and skipped |
-| **Top charts** | Artists, tracks, albums, shows and episodes ranked by time listened, all-time or per year |
-| **Habits** | Weekday × hour heatmap, hour-of-day, device, how plays start and end, connection country |
-| **By year** | Your own Wrapped, for every year at once |
+| **Overview** | How much, since when, music versus podcasts, top artists and shows, and moments such as your first play, heaviest day and longest unbroken session |
+| **All-time history** | Every play, each with its own start date and time. Search titles, artists, shows and albums. Filter by type, year, length, and whether it was skipped |
+| **Top charts** | Artists, tracks, albums, shows and episodes ranked by time listened, for all time or one year |
+| **Habits** | When you listen (a weekday-by-hour heat map), on what devices, and how plays start and end |
+| **By year** | A summary of every year side by side |
 
-Clicking any artist or show opens a drill-down: their share of your listening, first
-and last play, and their ranked tracks or episodes.
+Click any artist or show to see your history with them.
 
-## Notes on the numbers
+## How the numbers are worked out
 
-- **Times are local.** Timestamps in the export are UTC; every hour, day and heatmap
-  cell is converted to your machine's timezone, which is what makes "peak hour" mean
-  anything.
-- **Ranking is by time listened**, not play count, except where a heading says
-  "most played" — a 40-minute episode and a 30-second skip are not the same event.
-- **Skip rate counts Spotify's own `skipped` flag**, which fires whenever a track is
-  left before the end — including 40 minutes into a podcast — so it runs high. **Hide
-  skipped** in the history view drops those rows; **Only skips** inverts it.
-- **Podcasts are first-class** — for many people they are most of their listening — so podcasts and shows
-  are first-class throughout rather than a tab bolted onto a music app.
+- **Times are when you pressed play.** Spotify records only when a play *stopped*. The
+  app works out the start by taking away the time played. A long play is counted in
+  every hour it covered, so a 90-minute episode adds to three hours of the heat map, not one.
+- **Rankings use time listened, not play count.** A three-second skip and a full album
+  are not the same, so time is the fairer measure. The one exception is "most played
+  tracks", which counts plays because that is what it promises.
+- **"Skipped" is Spotify's own marker.** It means a play ended before the end of the
+  item, including a long podcast paused for the night. It does not mean you disliked it.
+- **Times are shown in your device's time zone.** Plays made while travelling appear in
+  the time zone of the device you are viewing on, not the one you were in.
+- **Duplicates are removed.** Spotify's export can contain the same history more than
+  once. A play counts once however many times it appears.
+- **Genre is not available.** Spotify's export does not include the genre of a song or
+  artist, and the app does not look anything up online.
 
-## Design
+## Running it yourself
 
-Chart colours are the validated categorical palette (blue / orange / aqua), checked for
-colour-vision separation against both the light and dark surfaces the app renders on.
-Light and dark are separately chosen sets, not an automatic inversion; the toggle lives
-at the bottom of the sidebar and persists. Every ranked list is a table with visible
-values, so nothing depends on colour alone.
+You need [Node.js](https://nodejs.org/) 20 or newer.
 
-## Layout
-
-```
-src/lib/ingest.ts        export files -> packed dataset (zip, folder or loose json)
-src/lib/store.ts         IndexedDB persistence
-src/lib/data.ts          decode the packed dataset into play objects
-src/lib/stats.ts         all aggregation (pure, memoised)
-src/lib/format.ts        durations, dates, labels
-src/components/          charts, virtualised history list, drawer
-src/views/               the import screen and the five views
+```bash
+npm install
+npm run dev
 ```
 
-The history list renders only the visible slice of rows, so tens of thousands of plays — or ten times
-that — scroll without lag.
+Then open the address it prints.
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Runs the app locally and reloads it as you edit |
+| `npm test` | Runs the automated tests |
+| `npm run build` | Builds the app as three files in `dist/` |
+| `npm run build:single` | Builds the whole app as one file, `dist-single/index.html` |
+
+The built app must be opened through a web server, even a local one such as
+`npx serve dist-single`. Browsers refuse to run it when the file is opened straight from disk.
+
+## Tests
+
+`npm test` runs the checks in `tests/`. They use made-up Spotify exports that cover
+situations one person's data rarely does: other years (2015 to 2027), music only,
+podcasts only, audiobooks, the older basic export format, a single play, nearly 60,000
+plays, duplicate copies, damaged files, and the zip itself. They also confirm that no
+personal details are kept and that nothing is saved between visits.
+
+## Publishing
+
+`.github/workflows/deploy.yml` runs the tests, builds the one-file app and publishes it
+to GitHub Pages whenever `main` changes. If any test fails, nothing is published.
+
+To switch it on: **Settings → Pages → Source: GitHub Actions**.
+
+## How it is built
+
+```
+src/lib/ingest.ts     reads the export: finds the right files, removes duplicates,
+                      keeps only what is shown
+src/lib/unpack.ts     unzips the export, skipping files it does not need
+src/lib/data.ts       turns the packed data into plays, with start and stop times
+src/lib/stats.ts      every total, ranking, chart and session
+src/lib/route.ts      which screen to show, with a safe fallback
+src/components/       charts, the history list, the artist panel, the crash screen
+src/views/            the import screen and the five screens
+tests/                automated tests and the made-up exports they use
+```
+
+Three packages run in the browser: **React** and **React DOM** draw the screens, and **fflate** opens the
+zip. Everything else is a build or test tool that never reaches the browser. The charts,
+the history list and the styling are written for this project, without a chart library
+or design kit.
