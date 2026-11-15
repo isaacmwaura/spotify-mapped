@@ -184,11 +184,17 @@ export function Import({
           </div>
         )}
 
-        <section className="how" aria-labelledby="how-title">
-          <h2 id="how-title">How it works</h2>
-          <p className="how-lead">
-            <b>Privacy by design:</b> your file never leaves this device.
-          </p>
+        <details className="how">
+          <summary>
+            <Icon d={ICON.shield} size={18} />
+            <span className="how-lead">
+              <b>Privacy by design:</b> your file never leaves this device.
+            </span>
+            <span className="how-toggle">
+              How it works
+              <Icon d={ICON.chevron} size={15} />
+            </span>
+          </summary>
 
           <div className="how-flow">
             <div className="how-device">
@@ -239,7 +245,7 @@ export function Import({
               </li>
             ))}
           </ul>
-        </section>
+        </details>
 
         <section className="import-steps" aria-labelledby="get-file">
           <h2 id="get-file">No file yet?</h2>
@@ -293,6 +299,7 @@ const ICON = {
   zip: 'M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M10 4h.01M10 7h.01M10 10h.01M10 13h.01',
   browser: 'M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM3 9h18M6.5 6.5h.01M9 6.5h.01',
   arrow: 'M5 12h14m-5-5 5 5-5 5',
+  chevron: 'm6 9 6 6 6-6',
   cloudOff: 'M7 18.5h10a4 4 0 0 0 .7-7.9A6 6 0 0 0 6.3 9.7 4.4 4.4 0 0 0 7 18.5zM3 3l18 18',
 }
 

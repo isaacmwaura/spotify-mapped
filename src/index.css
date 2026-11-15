@@ -624,29 +624,66 @@ select.control:focus {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  padding: 0 16px;
 }
 
-.how h2 {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 620;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.how[open] {
+  padding-bottom: 16px;
+}
+
+.how summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.how summary::-webkit-details-marker {
+  display: none;
+}
+
+.how summary svg {
+  flex: none;
 }
 
 .how-lead {
-  margin: -8px 0 0;
-  font-size: 14.5px;
+  flex: 1;
+  font-size: 13.5px;
   color: var(--text-secondary);
 }
 
 .how-lead b {
   color: var(--text-primary);
+}
+
+.how-toggle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.how-toggle svg {
+  transition: transform 0.15s;
+}
+
+.how[open] .how-toggle svg {
+  transform: rotate(180deg);
+}
+
+.how summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.how[open] .how-flow {
+  margin: 8px 0 14px;
 }
 
 .how-flow {
