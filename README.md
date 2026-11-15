@@ -29,8 +29,8 @@ The pictures on this page use an invented listener, not anyone's real data.
    (`spotify.com/account/privacy`) and request **Extended streaming history**. The
    default "Account data" option only covers about the last year; the extended one goes
    back to the day you joined. You can request both.
-2. **Wait for the email.** Spotify sends a download link when the export is ready. Its
-   privacy policy reports answering data requests in about four days on average in 2025.
+2. **Wait for the email.** Spotify sends a download link when the export is ready. This
+   usually takes a few days, and sometimes up to a month.
 3. **Open [Spotify Mapped](https://isaacmwaura.github.io/spotify-mapped/) and add the file.** On a computer, drag the zip onto the page, or
    choose it. On a phone, tap *Choose file* and pick the zip. You can also choose the
    unzipped folder on a computer.

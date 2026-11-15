@@ -266,7 +266,7 @@ export function Import({
             <li>
               <Icon d={ICON.mail} />
               <b>Get the email</b>
-              <span>A few days on average</span>
+              <span>Usually a few days, sometimes up to a month</span>
             </li>
             <li>
               <Icon d={ICON.upload} />
