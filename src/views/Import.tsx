@@ -184,14 +184,62 @@ export function Import({
           </div>
         )}
 
-        <ul className="import-promise" aria-label="Privacy">
-          {PROMISES.map((p) => (
-            <li key={p.label} title={p.detail}>
-              <Icon d={p.icon} size={18} />
-              {p.label}
-            </li>
-          ))}
-        </ul>
+        <section className="how" aria-labelledby="how-title">
+          <h2 id="how-title">How it works</h2>
+          <p className="how-lead">
+            <b>Privacy by design:</b> your file never leaves this device.
+          </p>
+
+          <div className="how-flow">
+            <div className="how-device">
+              <span className="how-device-label">
+                <Icon d={ICON.device} size={15} />
+                Your device
+              </span>
+              <ol className="how-chain">
+                <li>
+                  <Icon d={ICON.zip} size={22} />
+                  Your Spotify zip
+                </li>
+                <li className="how-arrow" aria-hidden="true">
+                  <Icon d={ICON.arrow} size={18} />
+                </li>
+                <li>
+                  <Icon d={ICON.browser} size={22} />
+                  Opened in this tab
+                </li>
+                <li className="how-arrow" aria-hidden="true">
+                  <Icon d={ICON.arrow} size={18} />
+                </li>
+                <li>
+                  <Icon d={ICON.top} size={22} />
+                  Your history, mapped
+                </li>
+              </ol>
+            </div>
+
+            <div className="how-blocked" aria-hidden="true">
+              <span className="how-blocked-line" />
+              <span className="how-blocked-x">&times;</span>
+              <span className="how-blocked-line" />
+            </div>
+
+            <div className="how-cloud">
+              <Icon d={ICON.cloudOff} size={26} />
+              <b>Internet</b>
+              <span>Nothing sent</span>
+            </div>
+          </div>
+
+          <ul className="import-promise" aria-label="Privacy">
+            {PROMISES.map((p) => (
+              <li key={p.label} title={p.detail}>
+                <Icon d={p.icon} size={17} />
+                {p.label}
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section className="import-steps" aria-labelledby="get-file">
           <h2 id="get-file">No file yet?</h2>
@@ -241,6 +289,11 @@ const ICON = {
   request: 'M9 4h6M8 4H6a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2M9 12l2 2 4-4',
   mail: 'M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3 7l9 6 9-6',
   upload: 'M12 16V4m0 0L8 8m4-4 4 4M3 15v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-3',
+  device: 'M5 5h14a1 1 0 0 1 1 1v9H4V6a1 1 0 0 1 1-1zM2 18.5h20',
+  zip: 'M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M10 4h.01M10 7h.01M10 10h.01M10 13h.01',
+  browser: 'M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM3 9h18M6.5 6.5h.01M9 6.5h.01',
+  arrow: 'M5 12h14m-5-5 5 5-5 5',
+  cloudOff: 'M7 18.5h10a4 4 0 0 0 .7-7.9A6 6 0 0 0 6.3 9.7 4.4 4.4 0 0 0 7 18.5zM3 3l18 18',
 }
 
 const FEATURES = [
