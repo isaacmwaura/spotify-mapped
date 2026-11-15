@@ -1,13 +1,27 @@
 # Spotify Mapped
 
-See your complete Spotify listening history — every play since you joined — from the
-data export Spotify gives you. Drop the file in, and the analysis appears in your browser.
+See your complete Spotify listening history, every play since you joined, from the
+data export Spotify gives you.
+
+<h2 align="center">
+  <a href="https://isaacmwaura.github.io/spotify-mapped/">&#9654;&nbsp; Open Spotify Mapped</a>
+</h2>
+<p align="center">
+  <a href="https://isaacmwaura.github.io/spotify-mapped/"><b>isaacmwaura.github.io/spotify-mapped</b></a><br>
+  This is the only official address. The tool runs there, in your browser.<br>
+  It never asks you to sign in to Spotify, Google or anything else.
+</p>
+
+<p align="center">
+  <a href="https://isaacmwaura.github.io/spotify-mapped/"><img src="docs/screenshots/overview.png" alt="The Overview screen: total hours, music versus podcasts, and listening per month" width="880"></a>
+</p>
 
 **Private by design.** Your file is read inside your browser tab. Nothing is uploaded,
 because there is no server, and it keeps working offline once the page has loaded.
 Nothing is saved: close or reload the tab and the data is gone.
 
 This is an independent project. It is not made by, or affiliated with, Spotify.
+The pictures on this page use an invented listener, not anyone's real data.
 
 ## Using it
 
@@ -17,7 +31,7 @@ This is an independent project. It is not made by, or affiliated with, Spotify.
    back to the day you joined. You can request both.
 2. **Wait for the email.** Spotify sends a download link when the export is ready. Its
    privacy policy reports answering data requests in about four days on average in 2025.
-3. **Open the app and add the file.** On a computer, drag the zip onto the page, or
+3. **Open [Spotify Mapped](https://isaacmwaura.github.io/spotify-mapped/) and add the file.** On a computer, drag the zip onto the page, or
    choose it. On a phone, tap *Choose file* and pick the zip. You can also choose the
    unzipped folder on a computer.
 
@@ -45,6 +59,17 @@ It works in a phone's browser. Two limits worth knowing:
 | **By year** | A summary of every year side by side |
 
 Click any artist or show to see your history with them.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/history.png" alt="All-time history: every play with its own date and time"><br><b>All-time history.</b> Every play, searchable, with skips marked.</td>
+    <td width="50%"><img src="docs/screenshots/patterns.png" alt="Habits: a weekday-by-hour heat map and listening by hour of day"><br><b>Habits.</b> When you listen, hour by hour.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/top.png" alt="Top charts: artists ranked by time listened"><br><b>Top charts.</b> Ranked by time listened, all time or one year.</td>
+    <td width="50%"><img src="docs/screenshots/home.png" alt="The start screen, where you add your Spotify zip"><br><b>Start screen.</b> Add the zip Spotify emails you.</td>
+  </tr>
+</table>
 
 ## How the numbers are worked out
 

@@ -131,6 +131,9 @@ export function MonthlyChart({
                     </div>
                     <TipRow color="var(--series-2)" label="Podcasts" value={hours(d.podcastMs)} />
                     <TipRow color="var(--series-1)" label="Music" value={hours(d.musicMs)} />
+                    {d.otherMs > 0 && (
+                      <TipRow color="var(--series-3)" label="Audiobooks & other" value={hours(d.otherMs)} />
+                    )}
                     <TipRow label="Plays" value={num(d.plays)} />
                   </>
                 ))

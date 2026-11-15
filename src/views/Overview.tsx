@@ -83,7 +83,7 @@ export function Overview({
           value={hours(spokenMs)}
           sub={
             hasBooks
-              ? `${spokenShare.toFixed(0)}% of your time · ${num(s.shows)} shows · ${num(s.books)} books`
+              ? `${spokenShare.toFixed(0)}% of your time · ${num(s.shows)} shows · ${num(s.books)} ${s.books === 1 ? 'book' : 'books'}`
               : `${spokenShare.toFixed(0)}% of your time · ${num(s.shows)} shows`
           }
         />
@@ -112,6 +112,9 @@ export function Overview({
             items={[
               { color: 'var(--series-2)', label: 'Podcasts' },
               { color: 'var(--series-1)', label: 'Music' },
+              ...(months.some((m) => m.otherMs > 0)
+                ? [{ color: 'var(--series-3)', label: 'Audiobooks & other' }]
+                : []),
             ]}
           />
         }
