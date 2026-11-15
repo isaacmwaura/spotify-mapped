@@ -96,32 +96,16 @@ export function Import({
           <h1 className="import-title">Spotify Mapped</h1>
         </div>
 
-        <p className="import-lead">
-          See your whole Spotify story: every song and podcast since the day you joined,
-          your top artists and shows, when you listen most, and how each year compares.
-        </p>
+        <p className="import-lead">Your whole Spotify history, mapped.</p>
 
-        <div className="import-promise">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 2.5 4.5 5.5v6c0 4.6 3.2 8.6 7.5 10 4.3-1.4 7.5-5.4 7.5-10v-6z" />
-            <path d="m8.8 12 2.2 2.2 4.2-4.4" />
-          </svg>
-          <p>
-            <b>Your data stays with you.</b> Everything happens right here in your browser, and
-            it keeps working even if you go offline. Your file is never uploaded, and we don't
-            collect or keep anything. Close the page and it's gone.
-          </p>
-        </div>
+        <ul className="import-features" aria-label="What you'll see">
+          {FEATURES.map((f) => (
+            <li key={f.label}>
+              <Icon d={f.icon} />
+              {f.label}
+            </li>
+          ))}
+        </ul>
 
         <div
           className={`dropzone ${dragging ? 'is-dragging' : ''} ${phase === 'reading' ? 'is-busy' : ''}`}
@@ -155,18 +139,7 @@ export function Import({
                 <path d="M3 15v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-3" />
               </svg>
               <div className="dropzone-title">
-                {touchFirst ? 'Add your Spotify export' : 'Drop your Spotify export here'}
-              </div>
-              <div className="dropzone-note">
-                {touchFirst ? (
-                  <>
-                    Tap below and pick the <code>my_spotify_data.zip</code> Spotify emailed you
-                  </>
-                ) : (
-                  <>
-                    The <code>my_spotify_data.zip</code> file, or the folder you unpacked it to
-                  </>
-                )}
+                {touchFirst ? 'Add your Spotify zip' : 'Drop your Spotify zip here'}
               </div>
               <div className="dropzone-actions">
                 <button className="btn-primary" onClick={() => filePicker.current?.click()}>
@@ -211,40 +184,93 @@ export function Import({
           </div>
         )}
 
+        <ul className="import-promise" aria-label="Privacy">
+          {PROMISES.map((p) => (
+            <li key={p.label} title={p.detail}>
+              <Icon d={p.icon} size={18} />
+              {p.label}
+            </li>
+          ))}
+        </ul>
+
         <section className="import-steps" aria-labelledby="get-file">
-          <h2 id="get-file">Don't have your file yet?</h2>
+          <h2 id="get-file">No file yet?</h2>
           <ol>
             <li>
-              <b>Ask Spotify for it</b>
+              <Icon d={ICON.request} />
+              <a
+                href="https://www.spotify.com/account/privacy/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Request it from Spotify
+              </a>
               <span>
-                In your{' '}
-                <a
-                  href="https://www.spotify.com/account/privacy/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Spotify privacy settings
-                </a>
-                , tick <i>Extended streaming history</i>. It goes back to the day you joined.
+                Tick <i>Extended streaming history</i>
               </span>
             </li>
             <li>
-              <b>Wait for the email</b>
-              <span>Confirm the request, then watch your inbox. It takes a few days on average.</span>
+              <Icon d={ICON.mail} />
+              <b>Get the email</b>
+              <span>A few days on average</span>
             </li>
             <li>
-              <b>Add it here</b>
-              <span>
-                {touchFirst
-                  ? 'Tap Choose file and pick the zip. No need to unzip it.'
-                  : 'Drop the zip onto this page. No need to unzip it.'}
-              </span>
+              <Icon d={ICON.upload} />
+              <b>{touchFirst ? 'Add the zip here' : 'Drop the zip here'}</b>
+              <span>No need to unzip</span>
             </li>
           </ol>
         </section>
 
       </div>
     </div>
+  )
+}
+
+/* ------------------------------------------------------------------- icons */
+
+/** Line icons drawn for this page, one path string each (24 x 24 grid). */
+const ICON = {
+  history: 'M4 6h16M4 12h16M4 18h10',
+  top: 'M5 20v-7M12 20V5M19 20v-10',
+  clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7.5V12l3 2',
+  calendar: 'M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3 10h18M8 3v4M16 3v4',
+  lock: 'M7 11V8a5 5 0 0 1 10 0v3M6 11h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z',
+  offline: 'M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01M3 3l18 18',
+  shield: 'M12 2.5 4.5 5.5v6c0 4.6 3.2 8.6 7.5 10 4.3-1.4 7.5-5.4 7.5-10v-6zM8.8 12l2.2 2.2 4.2-4.4',
+  request: 'M9 4h6M8 4H6a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2M9 12l2 2 4-4',
+  mail: 'M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3 7l9 6 9-6',
+  upload: 'M12 16V4m0 0L8 8m4-4 4 4M3 15v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-3',
+}
+
+const FEATURES = [
+  { icon: ICON.history, label: 'Every play' },
+  { icon: ICON.top, label: 'Top artists' },
+  { icon: ICON.clock, label: 'Your habits' },
+  { icon: ICON.calendar, label: 'Year by year' },
+]
+
+const PROMISES = [
+  { icon: ICON.lock, label: 'Stays on your device', detail: 'Your file is read in this browser tab and never uploaded.' },
+  { icon: ICON.offline, label: 'Works offline', detail: 'Once the page is open, no internet is needed.' },
+  { icon: ICON.shield, label: 'Nothing collected', detail: 'Nothing you add is collected or saved. Close the page and it is gone.' },
+]
+
+function Icon({ d, size = 20 }: { d: string; size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={d} />
+    </svg>
   )
 }
 
