@@ -116,3 +116,10 @@ Three packages run in the browser: **React** and **React DOM** draw the screens,
 zip. Everything else is a build or test tool that never reaches the browser. The charts,
 the history list and the styling are written for this project, without a chart library
 or design kit.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE). You may use, change and share the code, as long as
+the licence notice stays with it.
+
+Spotify is a trademark owned by Spotify. The name is used here only to say which export the app reads.

@@ -10,6 +10,7 @@ import { Top } from './views/Top'
 import { Patterns } from './views/Patterns'
 import { Years } from './views/Years'
 import { EntityDrawer, type Selection } from './components/EntityDrawer'
+import { Logo } from './components/Logo'
 
 
 const VIEWS: {
@@ -154,15 +155,7 @@ export default function App() {
     <div className="app">
       <nav className="sidebar">
         <div className="brand">
-          <svg className="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="12" r="11" fill="var(--accent)" />
-            <path
-              d="M7 9.4c3.2-.9 6.6-.6 9.4.9M7.6 12.4c2.7-.7 5.5-.5 7.9.8M8.2 15.3c2.2-.5 4.4-.3 6.3.7"
-              stroke="var(--accent-ink)"
-              strokeWidth="1.7"
-              strokeLinecap="round"
-            />
-          </svg>
+          <Logo className="brand-mark" />
           <div>
             <div className="brand-name">Spotify Mapped</div>
             <div className="brand-sub">{data.profile.displayName}</div>
