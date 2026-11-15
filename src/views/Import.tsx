@@ -92,13 +92,35 @@ export function Import({
     <div className="import-shell">
       <div className="import-card">
         <div className="import-brand">
-          <Logo size={30} />
-          <div>
-            <h1 className="import-title">Spotify Mapped</h1>
-            <p className="import-sub">
-              Your full listening history, read straight from your Spotify export.
-            </p>
-          </div>
+          <Logo size={32} />
+          <h1 className="import-title">Spotify Mapped</h1>
+        </div>
+
+        <p className="import-lead">
+          See your whole Spotify story: every song and podcast since the day you joined,
+          your top artists and shows, when you listen most, and how each year compares.
+        </p>
+
+        <div className="import-promise">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 2.5 4.5 5.5v6c0 4.6 3.2 8.6 7.5 10 4.3-1.4 7.5-5.4 7.5-10v-6z" />
+            <path d="m8.8 12 2.2 2.2 4.2-4.4" />
+          </svg>
+          <p>
+            <b>Your data stays with you.</b> Everything happens right here in your browser, and
+            it keeps working even if you go offline. Your file is never uploaded, and we don't
+            collect or keep anything. Close the page and it's gone.
+          </p>
         </div>
 
         <div
@@ -189,28 +211,37 @@ export function Import({
           </div>
         )}
 
-        <details className="import-help">
-          <summary>Where do I get this file?</summary>
+        <section className="import-steps" aria-labelledby="get-file">
+          <h2 id="get-file">Don't have your file yet?</h2>
           <ol>
             <li>
-              Open <span className="mono">spotify.com/account/privacy</span> while signed in.
+              <b>Ask Spotify for it</b>
+              <span>
+                In your{' '}
+                <a
+                  href="https://www.spotify.com/account/privacy/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Spotify privacy settings
+                </a>
+                , tick <i>Extended streaming history</i>. It goes back to the day you joined.
+              </span>
             </li>
             <li>
-              Tick <b>Extended streaming history</b> — the default "Account data" option only
-              covers about the last year. Ticking both is fine.
+              <b>Wait for the email</b>
+              <span>Confirm the request, then watch your inbox. It takes a few days on average.</span>
             </li>
             <li>
-              Confirm the email Spotify sends, then wait for the download link. Spotify's
-              privacy policy reports answering data requests in about four days on average in 2025.
+              <b>Add it here</b>
+              <span>
+                {touchFirst
+                  ? 'Tap Choose file and pick the zip. No need to unzip it.'
+                  : 'Drop the zip onto this page. No need to unzip it.'}
+              </span>
             </li>
-            <li>Drop the zip they email you straight onto this page.</li>
           </ol>
-          <p className="import-privacy">
-            Everything happens inside this browser tab. Nothing is uploaded, because there is
-            no server to upload it to. Nothing is saved either: close or reload the tab and
-            your data is gone.
-          </p>
-        </details>
+        </section>
 
       </div>
     </div>

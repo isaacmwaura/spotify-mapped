@@ -1,13 +1,7 @@
 /**
- * The app's mark: a tiny listening heat map, a 3 x 3 grid that is brighter where
- * there is more listening. index.html carries the same drawing as the tab icon.
+ * The app's mark: a map pin with a play button inside. index.html carries the
+ * same drawing as the tab icon.
  */
-const CELLS: [number, number, number][] = [
-  [0, 0, 0.35], [1, 0, 0.6], [2, 0, 1],
-  [0, 1, 0.6], [1, 1, 1], [2, 1, 0.6],
-  [0, 2, 1], [1, 2, 0.6], [2, 2, 0.35],
-]
-
 export function Logo({ size, className }: { size?: number; className?: string }) {
   return (
     <svg
@@ -18,19 +12,11 @@ export function Logo({ size, className }: { size?: number; className?: string })
       fill="none"
       aria-hidden="true"
     >
-      <rect x="1" y="1" width="22" height="22" rx="6" fill="var(--accent)" />
-      {CELLS.map(([col, row, opacity]) => (
-        <rect
-          key={`${col}-${row}`}
-          x={4.4 + col * 5.5}
-          y={4.4 + row * 5.5}
-          width="4.2"
-          height="4.2"
-          rx="1.1"
-          fill="var(--accent-ink)"
-          opacity={opacity}
-        />
-      ))}
+      <path
+        d="M12 1.5c-4.7 0-8.5 3.7-8.5 8.4 0 6 8.5 12.6 8.5 12.6s8.5-6.6 8.5-12.6c0-4.7-3.8-8.4-8.5-8.4z"
+        fill="var(--accent)"
+      />
+      <path d="M10.1 6.6v6.4l5.2-3.2z" fill="var(--accent-ink)" />
     </svg>
   )
 }

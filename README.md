@@ -4,7 +4,8 @@ See your complete Spotify listening history — every play since you joined — 
 data export Spotify gives you. Drop the file in, and the analysis appears in your browser.
 
 **Private by design.** Your file is read inside your browser tab. Nothing is uploaded,
-because there is no server. Nothing is saved: close or reload the tab and the data is gone.
+because there is no server, and it keeps working offline once the page has loaded.
+Nothing is saved: close or reload the tab and the data is gone.
 
 This is an independent project. It is not made by, or affiliated with, Spotify.
 
@@ -89,7 +90,8 @@ The built app must be opened through a web server, even a local one such as
 situations one person's data rarely does: other years (2015 to 2027), music only,
 podcasts only, audiobooks, the older basic export format, a single play, nearly 60,000
 plays, duplicate copies, damaged files, and the zip itself. They also confirm that no
-personal details are kept and that nothing is saved between visits.
+personal details are kept, that nothing is saved between visits, and that the app has
+no code that sends anything over the internet.
 
 ## Publishing
 

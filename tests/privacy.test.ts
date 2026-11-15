@@ -74,3 +74,24 @@ describe('nothing is saved between visits', () => {
     expect(sources['../src/App.tsx']).toMatch(/indexedDB\?\.deleteDatabase\('spotify-mapped'\)/)
   })
 })
+
+describe('nothing leaves the device', () => {
+  // The home page promises the file is never uploaded and the app works offline.
+  const sources = import.meta.glob('../src/**/*.{ts,tsx}', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+  const page = import.meta.glob('../index.html', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+
+  it('has no code that can send or fetch anything over the network', () => {
+    for (const [file, code] of Object.entries(sources)) {
+      expect(code, file).not.toMatch(/fetch\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource|serviceWorker|new Image\(/)
+    }
+  })
+
+  it('loads no scripts, styles, fonts or images from other websites', () => {
+    const html = Object.values(page)[0]
+    expect(html).toBeTruthy()
+    expect(html).not.toMatch(/(src|href)="https?:\/\//)
+    for (const [file, code] of Object.entries(sources)) {
+      expect(code, file).not.toMatch(/@import\s+url\(|url\(["']?https?:/)
+    }
+  })
+})
